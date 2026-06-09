@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 
 const KEY_FIGURES = [
   { value: '15',      label: 'KPIs suivis',           icon: '📊' },
@@ -18,6 +19,37 @@ const ARCHIVES = [
 ]
 
 export default function RapportPage() {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleGenerateReport = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch('http://localhost:3000/api/generate-report')
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'rapport-annuel-2025.pdf'
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      } else {
+        console.error('Failed to generate report')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handlePreviewReport = () => {
+    // Direct navigation to the preview endpoint
+    window.open('http://localhost:3000/api/generate-report?preview', '_blank')
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
 
@@ -50,9 +82,13 @@ export default function RapportPage() {
               </Link>
             ))}
           </div>
-          <Link href="/rapport" className="bg-[#D4AF37] hover:bg-[#c4a030] text-[#0A2B4E] font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
-            Télécharger le rapport
-          </Link>
+          <button 
+            onClick={handleGenerateReport}
+            disabled={isLoading}
+            className="bg-[#D4AF37] hover:bg-[#c4a030] text-[#0A2B4E] font-semibold text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Génération...' : 'Télécharger le rapport'}
+          </button>
         </nav>
       </header>
 
@@ -80,10 +116,17 @@ export default function RapportPage() {
                 15 indicateurs clés. Un score IMNT. Des analyses par pilier. Des recommandations court, moyen et long terme. Tout ce que vous devez savoir sur l'économie numérique tunisienne, dans un document unique.
               </p>
               <div className="flex flex-wrap gap-4">
-                <button className="bg-[#D4AF37] hover:bg-[#c4a030] text-[#0A2B4E] font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
-                  <span>📄</span> Télécharger le PDF
+                <button 
+                  onClick={handleGenerateReport}
+                  disabled={isLoading}
+                  className="bg-[#D4AF37] hover:bg-[#c4a030] text-[#0A2B4E] font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span>📄</span> {isLoading ? 'Génération en cours...' : 'Télécharger le PDF'}
                 </button>
-                <button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors flex items-center gap-2">
+                <button 
+                  onClick={handlePreviewReport}
+                  className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors flex items-center gap-2"
+                >
                   <span>🖥️</span> Consulter l'édition en ligne
                 </button>
               </div>
@@ -92,9 +135,7 @@ export default function RapportPage() {
             {/* mockup */}
             <div className="hidden lg:flex justify-center">
               <div className="relative">
-                {/* shadow */}
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-48 h-8 bg-black/30 blur-xl rounded-full" />
-                {/* cover */}
                 <div className="w-64 h-80 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-white/20" style={{transform:'perspective(800px) rotateY(-8deg) rotateX(3deg)'}}>
                   <div className="bg-[#0A2B4E] h-4 w-full" />
                   <div className="flex-1 bg-gradient-to-br from-slate-50 to-white p-6 flex flex-col justify-between">
@@ -188,12 +229,15 @@ export default function RapportPage() {
                 <div className={`text-2xl font-black ${current ? 'text-[#D4AF37]' : 'text-slate-700'}`}>{year}</div>
                 <div className={`text-sm mt-0.5 ${current ? 'text-slate-300' : 'text-slate-400'}`}>{label}</div>
               </div>
-              <button className={`text-sm font-semibold px-4 py-2 rounded-lg transition-colors ${
-                current
-                  ? 'bg-[#D4AF37] text-[#0A2B4E] hover:bg-[#c4a030]'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}>
-                {current ? 'Télécharger' : 'Archivé'}
+              <button 
+                onClick={current ? handleGenerateReport : undefined}
+                disabled={current ? isLoading : false}
+                className={`text-sm font-semibold px-4 py-2 rounded-lg transition-colors ${
+                  current
+                    ? 'bg-[#D4AF37] text-[#0A2B4E] hover:bg-[#c4a030] disabled:opacity-50'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}>
+                {current ? (isLoading ? 'Génération...' : 'Télécharger') : 'Archivé'}
               </button>
             </div>
           ))}
