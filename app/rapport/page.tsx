@@ -18,17 +18,6 @@ const ARCHIVES = [
   { year: '2023', label: 'Rapport précédent', current: false },
 ]
 
-// ── URL helper ───────────────────────────────────────────────────────────────
-// Fonctionne sur localhost ET sur Vercel (VERCEL_URL est injecté automatiquement)
-function getApiBase(): string {
-  // Côté navigateur : on utilise toujours une URL relative → pas de problème CORS
-  if (typeof window !== 'undefined') return ''
-
-  // Côté serveur (SSR) : on reconstruit l'URL absolue depuis les variables Vercel
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-  return 'http://localhost:3000'
-}
-
 export default function RapportPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -37,8 +26,8 @@ export default function RapportPage() {
     setIsLoading(true)
     setError(null)
     try {
-      // URL relative → fonctionne partout (localhost + Vercel + domaine custom)
-      const response = await fetch(`${getApiBase()}/api/generate-report`)
+      // ✅ Direct URL to Vercel deployment
+      const response = await fetch('https://platform-six-dusky.vercel.app/api/generate-report')
       if (!response.ok) {
         const json = await response.json().catch(() => ({}))
         throw new Error(json.error ?? `HTTP ${response.status}`)
@@ -61,8 +50,8 @@ export default function RapportPage() {
   }
 
   const handlePreview = () => {
-    // window.open avec URL relative fonctionne partout
-    window.open(`${getApiBase()}/api/generate-report?preview`, '_blank')
+    // ✅ Direct URL to Vercel deployment with preview parameter
+    window.open('https://platform-six-dusky.vercel.app/api/generate-report?preview', '_blank')
   }
 
   return (
