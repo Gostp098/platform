@@ -1,8 +1,6 @@
 // app/components/pdf/ReportPDF.tsx
 // ─── Rapport Annuel Économie Numérique Tunisie 2025 ─────────────────────────
 // Architecture : 22 sections · @react-pdf/renderer
-// Chaque section est un composant autonome → fichier facile à maintenir.
-// Données : kpis.ts (source) + reportMeta.ts (scores, couleurs, meta)
 
 import React from 'react'
 import {
@@ -28,17 +26,30 @@ import { GaugeChart, RadarChart, BarChart } from './Charts'
 const getStatutColor = (s: AlertStatus) => STATUT_COLORS[s] ?? STATUT_COLORS['gris']
 const getStatutLabel = (s: AlertStatus) => STATUT_LABELS[s] ?? 'N/A'
 
-// Piliers dans le bon ordre de rendu (mapping kpis.ts keys)
+// ─── NOUVELLE STRUCTURE 15 KPI / 5 PILIERS ───────────────────────────────────
+// Pilier 1 — Infrastructures       : KPI-02, KPI-03, KPI-04, KPI-05
+// Pilier 2 — Capital humain        : KPI-06
+// Pilier 3 — Économie productive   : KPI-07, KPI-08, KPI-09, KPI-10
+// Pilier 4 — E-gouvernement        : KPI-11, KPI-12, KPI-13
+// Pilier 5 — Gouvernance & Cyber   : KPI-14, KPI-15
+
+const PILIER_KPI_MAP: Record<string, string[]> = {
+  'Infrastructures':     ['KPI-02', 'KPI-03', 'KPI-04', 'KPI-05'],
+  'Capital humain':      ['KPI-06'],
+  'Economie productive': ['KPI-07', 'KPI-08', 'KPI-09', 'KPI-10'],
+  'E-gouvernement':      ['KPI-11', 'KPI-12', 'KPI-13'],
+  'Gouvernance':         ['KPI-14', 'KPI-15'],
+}
+
 const RENDERED_PILIERS = [
-  { key: 'Infrastructures',    num: '01' },
-  { key: 'Capital humain',     num: '02' },
-  { key: 'Economie productive',num: '03' },
-  { key: 'Fintech',            num: '04' },
-  { key: 'E-gouvernement',     num: '05' },
-  { key: 'Gouvernance',        num: '06' },
+  { key: 'Infrastructures',     num: '01' },
+  { key: 'Capital humain',      num: '02' },
+  { key: 'Economie productive', num: '03' },
+  { key: 'E-gouvernement',      num: '04' },
+  { key: 'Gouvernance',         num: '05' },
 ]
 
-// Analyses par pilier (texte validé — à remplacer par ai_outputs en production)
+// Analyses par pilier
 const PILIER_ANALYSES: Record<string, {
   constat: string
   forces: string[]
@@ -67,13 +78,6 @@ const PILIER_ANALYSES: Record<string, {
     alerte: 'Sans accélération du financement, l\'écosystème risque de plafonner hors du Top 60 mondial.',
     recos: ['Créer un fonds de capital-risque public de 100M TND pour les deep tech', 'Faciliter l\'internationalisation des startups tunisiennes', 'Simplifier l\'accès aux marchés publics pour les startups'],
   },
-  'Fintech': {
-    constat: 'Le pilier Fintech affiche la meilleure performance avec 8,4M d\'opérations de paiement mobile et 815 000 wallets actifs en 2025.',
-    forces: ['8,4M d\'opérations paiement mobile — croissance > 30%', '815 000 wallets actifs — indicateur favorable'],
-    faiblesses: ['Taux de bancarisation encore insuffisant pour une adoption massive', 'Interopérabilité limitée entre les différents wallets'],
-    alerte: 'Malgré les bons indicateurs, le potentiel d\'inclusion financière numérique est encore largement sous-exploité.',
-    recos: ['Imposer l\'interopérabilité obligatoire entre wallets', 'Lancer des campagnes d\'éducation financière numérique', 'Développer les paiements gouvernementaux par mobile'],
-  },
   'E-gouvernement': {
     constat: 'L\'EGDI de 0,6935 place la Tunisie dans la zone intermédiaire, avec un OSI de 0,5951 en zone orange et E-Houwiya en situation critique (200 000 abonnés).',
     forces: ['EGDI 0,6935 — zone orange haute', 'Présence de services en ligne pour les principales procédures'],
@@ -91,7 +95,6 @@ const PILIER_ANALYSES: Record<string, {
 }
 
 // ─── PAGE WRAPPER ─────────────────────────────────────────────────────────────
-// Chaque page normale utilise ce wrapper qui inclut header + footer fixes.
 
 function ReportPage({ children, style }: { children: React.ReactNode; style?: any }) {
   return (
@@ -127,6 +130,10 @@ function ReportPage({ children, style }: { children: React.ReactNode; style?: an
 }
 
 // ─── S1. COVER PAGE ───────────────────────────────────────────────────────────
+// Modifications :
+//   • Titre principal en lettres espacées, taille augmentée
+//   • Texte méta (indicateurs, sources, date, copyright) en blanc et plus lisible
+//   • Bloc score (jauges IMNT + NRI + rangs) entièrement supprimé
 
 function CoverPage() {
   return (
@@ -134,68 +141,117 @@ function CoverPage() {
       <View style={S.coverAccentBar} />
       <View style={S.coverContainer}>
 
+        {/* ── Sous-titre catégorie (petit tag au-dessus) ── */}
         <Text style={S.coverTag}>
-          Rapport Annuel de l'Économie Numérique en Tunisie
+          Édition {REPORT_YEAR} · Version {REPORT_VERSION}
         </Text>
 
+        {/* ── Titre principal espacé et agrandi ── */}
+        <Text style={{
+          fontSize: 13,
+          fontFamily: 'Helvetica-Bold',
+          color: WHITE,
+          letterSpacing: 4,
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          lineHeight: 1.7,
+          marginTop: 18,
+          marginBottom: 6,
+        }}>
+          {'R A P P O R T  A N N U E L  D E'}
+        </Text>
+        <Text style={{
+          fontSize: 13,
+          fontFamily: 'Helvetica-Bold',
+          color: GOLD,
+          letterSpacing: 4,
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          lineHeight: 1.7,
+          marginBottom: 6,
+        }}>
+          {'L \' É C O N O M I E  N U M É R I Q U E'}
+        </Text>
+        <Text style={{
+          fontSize: 13,
+          fontFamily: 'Helvetica-Bold',
+          color: WHITE,
+          letterSpacing: 4,
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          lineHeight: 1.7,
+          marginBottom: 20,
+        }}>
+          {'E N  T U N I S I E'}
+        </Text>
+
+        {/* ── Slogan ── */}
         <Text style={S.coverTitle1}>Think Digital,</Text>
         <Text style={S.coverTitle2}>Think Tunisia.</Text>
 
         <Text style={S.coverSubtitle}>
-          Données validées · Édition {REPORT_YEAR} · Version {REPORT_VERSION}
+          Données validées · Édition {REPORT_YEAR}
         </Text>
 
         <View style={S.coverDivider} />
 
-        {/* Score block */}
-        <View style={S.coverScoreBox}>
-          <View style={S.coverScoreItem}>
-            <GaugeChart score={IMNT_SCORE} color={GOLD} size="sm" />
-            <Text style={S.coverScoreLabel}>Score IMNT</Text>
-          </View>
+        {/* ── Bloc méta : texte blanc, lisible ── */}
+        <View style={{
+          marginTop: 24,
+          marginBottom: 24,
+          paddingHorizontal: 30,
+          gap: 10,
+        }}>
+          {/* Indicateurs & piliers */}
+          <Text style={{
+            fontSize: 11,
+            color: WHITE,
+            textAlign: 'center',
+            lineHeight: 1.6,
+            fontFamily: 'Helvetica',
+          }}>
+            15 indicateurs clés · 5 piliers IMNT
+          </Text>
 
-          <View style={S.coverSepLine} />
-
-          <View style={S.coverScoreItem}>
-            <Text style={S.coverScoreValue}>{NRI_SCORE}</Text>
-            <Text style={S.coverScoreUnit}>/100</Text>
-            <Text style={S.coverScoreLabel}>Score NRI 2025</Text>
-          </View>
-
-          <View style={S.coverSepLine} />
-
-          <View style={S.coverScoreItem}>
-            <Text style={S.coverScoreValueWhite}>{NRI_RANK_WORLD}e</Text>
-            <Text style={S.coverScoreUnit}>sur 127 économies</Text>
-            <Text style={S.coverScoreLabel}>Rang mondial</Text>
-          </View>
-
-          <View style={S.coverSepLine} />
-
-          <View style={S.coverScoreItem}>
-            <Text style={S.coverScoreValueWhite}>{NRI_RANK_REGION}e</Text>
-            <Text style={S.coverScoreUnit}>Arab States</Text>
-            <Text style={S.coverScoreLabel}>Rang région</Text>
-          </View>
-        </View>
-
-        {/* Meta */}
-        <View style={S.coverMeta}>
-          <Text style={S.coverMetaText}>
-            15 indicateurs clés · 5 piliers IMNT{'\n'}
+          {/* Sources */}
+          <Text style={{
+            fontSize: 10,
+            color: WHITE,
+            textAlign: 'center',
+            lineHeight: 1.6,
+            fontFamily: 'Helvetica',
+            opacity: 0.9,
+          }}>
             Sources : Portulans Institute, UIT, BCT, UN DESA, APII
           </Text>
-          <Text style={S.coverMetaText}>
-            Date de génération :{'\n'}{GENERATION_DATE}
+
+          {/* Date de génération */}
+          <Text style={{
+            fontSize: 10,
+            color: GOLD,
+            textAlign: 'center',
+            lineHeight: 1.6,
+            fontFamily: 'Helvetica',
+            marginTop: 4,
+          }}>
+            Date de génération : {GENERATION_DATE}
           </Text>
         </View>
 
+        {/* ── Footer doré avec copyright ── */}
         <View style={S.coverGoldBar}>
-          <Text style={S.coverFooterText}>
+          <Text style={{
+            fontSize: 9,
+            color: NAVY,
+            textAlign: 'center',
+            lineHeight: 1.7,
+            fontFamily: 'Helvetica',
+          }}>
             © Idée & Concept : Madame Rim Jalouli — Tous droits réservés{'\n'}
             Conception éditoriale & consultation : Mr Wahib Zaier
           </Text>
         </View>
+
       </View>
     </Page>
   )
@@ -242,7 +298,6 @@ function InstitutionalPage() {
 }
 
 // ─── S3. TABLE DES MATIÈRES ───────────────────────────────────────────────────
-// Pages numérotées manuellement (approximation correcte pour 10 pages A4)
 
 function TOCPage() {
   const sections = [
@@ -258,22 +313,21 @@ function TOCPage() {
     { label: '8. Objectifs du rapport', page: '6' },
     { label: '9. Méthodologie', page: '7' },
     { part: "Partie III — L'Index IMNT", items: [] },
-    { label: '10. Score IMNT global', page: '8' },
-    { label: '11. Analyse par pilier (6 piliers)', page: '8' },
-    { label: '12. Graphique radar & barres comparatifs', page: '9' },
+    { label: '10. Analyse par pilier (5 piliers)', page: '8' },
+    { label: '11. Graphique radar & barres comparatifs', page: '9' },
     { part: 'Partie IV — Analyse détaillée des KPI', items: [] },
-    { label: '13. Fiches détaillées des 15 KPI', page: '10' },
-    { label: '14. Tableau récapitulatif des KPI', page: '16' },
+    { label: '12. Fiches détaillées des 15 KPI', page: '10' },
+    { label: '13. Tableau récapitulatif des KPI', page: '16' },
     { part: 'Partie V — Alertes & Recommandations', items: [] },
-    { label: '15. Alertes prioritaires', page: '17' },
-    { label: '16. Recommandations à court terme (0–12 mois)', page: '18' },
-    { label: '17. Recommandations à moyen terme (1–3 ans)', page: '18' },
-    { label: '18. Recommandations à long terme (3–5 ans)', page: '19' },
+    { label: '14. Alertes prioritaires', page: '17' },
+    { label: '15. Recommandations à court terme (0–12 mois)', page: '18' },
+    { label: '16. Recommandations à moyen terme (1–3 ans)', page: '18' },
+    { label: '17. Recommandations à long terme (3–5 ans)', page: '19' },
     { part: 'Partie VI — Annexes techniques', items: [] },
-    { label: '19. Catalogue des KPI', page: '20' },
-    { label: '20. Sources et références', page: '21' },
-    { label: '21. Glossaire', page: '22' },
-    { label: '22. Limites méthodologiques', page: '22' },
+    { label: '18. Catalogue des KPI', page: '20' },
+    { label: '19. Sources et références', page: '21' },
+    { label: '20. Glossaire', page: '22' },
+    { label: '21. Limites méthodologiques', page: '22' },
   ]
 
   return (
@@ -308,10 +362,8 @@ function TOCPage() {
 
 function ListsFiguresTablesPage() {
   const figures = [
-    'Figure 1 — Jauge IMNT global (score 48,7/100) · p.8',
-    'Figure 2 — Jauges par pilier IMNT (6 piliers) · p.8',
-    'Figure 3 — Graphique radar des 5 axes IMNT · p.9',
-    'Figure 4 — Graphique en barres des scores par pilier · p.9',
+    'Figure 1 — Graphique radar des 5 piliers IMNT · p.9',
+    'Figure 2 — Graphique en barres des scores par pilier · p.9',
   ]
   const tables = [
     'Tableau 1 — Informations institutionnelles · p.2',
@@ -452,51 +504,60 @@ function IntroMethodoPage() {
         Gestion des millésimes : l'année du rapport est {REPORT_YEAR}, mais certaines données (EGDI 2024, GCI 2024)
         correspondent à l'année de publication des sources. Chaque KPI précise l'année de la donnée utilisée.
       </Text>
+
+      {/* ── Structure des 15 KPI par pilier ── */}
+      <Text style={[S.h2, { marginTop: 16 }]}>Structure des 15 KPI — 5 piliers IMNT</Text>
+      <View style={S.divider} />
+
+      {[
+        {
+          num: '01', key: 'Infrastructures',
+          kpis: ['KPI-02 — Pénétration Internet', 'KPI-03 — Couverture mobile', 'KPI-04 — Débit fixe médian', 'KPI-05 — Débit mobile médian'],
+        },
+        {
+          num: '02', key: 'Capital humain',
+          kpis: ['KPI-06 — Human Capital Index (HCI)'],
+        },
+        {
+          num: '03', key: 'Économie productive',
+          kpis: ['KPI-07 — Rang StartupBlink', 'KPI-08 — Valeur écosystème tech', 'KPI-09 — Nombre de startups', 'KPI-10 — Levées de fonds'],
+        },
+        {
+          num: '04', key: 'E-gouvernement',
+          kpis: ['KPI-11 — EGDI (E-Government Development Index)', 'KPI-12 — OSI (Online Services Index)', 'KPI-13 — Abonnés E-Houwiya'],
+        },
+        {
+          num: '05', key: 'Gouvernance & Cyber',
+          kpis: ['KPI-14 — GCI Tier (Global Cybersecurity Index)', 'KPI-15 — Maturité loi données personnelles'],
+        },
+      ].map(({ num, key, kpis }) => {
+        const color = PILIER_COLORS[key.replace(' & Cyber', '')] ?? NAVY
+        return (
+          <View key={key} style={{ marginBottom: 8, borderLeftWidth: 3, borderLeftColor: color, paddingLeft: 10, paddingVertical: 6, backgroundColor: LIGHT2, borderRadius: 3 }}>
+            <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: NAVY, marginBottom: 3 }}>
+              Pilier {num} — {key}
+            </Text>
+            {kpis.map(kpi => (
+              <Text key={kpi} style={{ fontSize: 8, color: SLATE, lineHeight: 1.5 }}>· {kpi}</Text>
+            ))}
+          </View>
+        )
+      })}
     </ReportPage>
   )
 }
 
-// ─── S10-12. SCORE IMNT + PILIERS + GRAPHIQUES ────────────────────────────────
+// ─── S10-11. PILIERS IMNT + GRAPHIQUES ────────────────────────────────────────
+// Modification : le bloc "Score IMNT global + NRI" a été supprimé.
+// La page commence directement par l'analyse des 5 piliers.
 
 function IMNTScorePage() {
   return (
     <ReportPage>
       <Text style={S.partLabel}>Partie III — L'Index IMNT</Text>
-      <Text style={S.h1}>Score IMNT global</Text>
+      <Text style={S.h1}>Analyse par pilier</Text>
       <View style={S.dividerGold} />
 
-      {/* Score central + NRI grid */}
-      <View style={{ flexDirection: 'row', gap: 14, marginBottom: 14 }}>
-        {/* Gauge */}
-        <View style={[S.scoreBlock, { width: 160, alignItems: 'center' }]}>
-          <GaugeChart score={IMNT_SCORE} color={GOLD} size="lg" />
-          <Text style={S.scoreLabel}>Indice IMNT {REPORT_YEAR}</Text>
-          <Text style={[S.small, { textAlign: 'center', marginTop: 4 }]}>
-            Performance intermédiaire
-          </Text>
-        </View>
-        {/* NRI stats */}
-        <View style={{ flex: 1 }}>
-          <Text style={S.h3}>Classement NRI 2025 (Portulans Institute)</Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
-            {[
-              { val: `${NRI_SCORE}`, sub: '/100', label: 'Score NRI global' },
-              { val: `${NRI_RANK_WORLD}e`, sub: 'sur 127', label: 'Rang mondial' },
-              { val: `${NRI_RANK_INCOME}e`, sub: 'Lower-middle', label: 'Rang groupe' },
-              { val: `${NRI_RANK_REGION}e`, sub: 'Arab States', label: 'Rang région' },
-            ].map(({ val, sub, label }) => (
-              <View key={label} style={[S.nriCell, { width: '45%' }]}>
-                <Text style={S.nriValue}>{val}</Text>
-                <Text style={S.nriSub}>{sub}</Text>
-                <Text style={S.nriLabel}>{label}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      </View>
-
-      {/* Pilier scores */}
-      <Text style={S.h2}>Analyse par pilier</Text>
       {RENDERED_PILIERS.map(({ key, num }, idx) => {
         const score = PILIER_SCORES[key] ?? 0
         const color = PILIER_COLORS[key] ?? NAVY
@@ -534,20 +595,20 @@ function ChartsPage() {
       <Text style={S.h1}>Graphiques comparatifs des piliers</Text>
       <View style={S.dividerGold} />
       <Text style={S.body}>
-        Le radar et le graphique en barres ci-dessous comparent les 6 piliers de l'IMNT sur une échelle de 0 à 100.
+        Le radar et le graphique en barres ci-dessous comparent les 5 piliers de l'IMNT sur une échelle de 0 à 100.
         La ligne pointillée à 50 représente le seuil de performance intermédiaire.
       </Text>
       <View style={{ flexDirection: 'row', gap: 20, marginTop: 12, justifyContent: 'center', alignItems: 'flex-start' }}>
         <View style={{ alignItems: 'center' }}>
           <RadarChart />
           <Text style={[S.small, { textAlign: 'center', marginTop: 4 }]}>
-            Figure 3 — Radar IMNT 2025
+            Figure 1 — Radar IMNT 2025
           </Text>
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
           <BarChart />
           <Text style={[S.small, { textAlign: 'center', marginTop: 4 }]}>
-            Figure 4 — Scores par pilier
+            Figure 2 — Scores par pilier
           </Text>
         </View>
       </View>
@@ -555,7 +616,7 @@ function ChartsPage() {
   )
 }
 
-// ─── S13. FICHES KPI ──────────────────────────────────────────────────────────
+// ─── S12. FICHES KPI ──────────────────────────────────────────────────────────
 
 function KPICard({ kpi }: { kpi: KPI }) {
   const statColor = getStatutColor(kpi.statut)
@@ -615,20 +676,75 @@ function KPICard({ kpi }: { kpi: KPI }) {
   )
 }
 
+// Les fiches KPI sont filtrées pour n'afficher que KPI-02 à KPI-15 (sans KPI-01)
+// et groupées par pilier selon la nouvelle structure PILIER_KPI_MAP.
 function KPIDetailsPage() {
+  // KPIs groupés par pilier dans l'ordre défini
+  const pilierOrder = [
+    'Infrastructures',
+    'Capital humain',
+    'Economie productive',
+    'E-gouvernement',
+    'Gouvernance',
+  ]
+
   return (
     <ReportPage>
       <Text style={S.partLabel}>Partie IV — Analyse détaillée des KPI</Text>
       <Text style={S.h1}>Fiches détaillées des 15 KPI</Text>
       <View style={S.dividerGold} />
-      {KPIS.map(kpi => <KPICard key={kpi.id} kpi={kpi} />)}
+
+      {pilierOrder.map((pilierKey, pIdx) => {
+        const kpiIds = PILIER_KPI_MAP[pilierKey] ?? []
+        const pilierKpis = kpiIds
+          .map(id => KPIS.find(k => k.id === id))
+          .filter(Boolean) as KPI[]
+
+        if (pilierKpis.length === 0) return null
+
+        const color = PILIER_COLORS[pilierKey] ?? NAVY
+        const label = PILIER_LABELS[pilierKey] ?? pilierKey
+        const num = String(pIdx + 1).padStart(2, '0')
+
+        return (
+          <View key={pilierKey}>
+            {/* En-tête de pilier */}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: color,
+              borderRadius: 4,
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              marginTop: 14,
+              marginBottom: 6,
+            }} wrap={false}>
+              <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: WHITE, marginRight: 8 }}>
+                PILIER {num}
+              </Text>
+              <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: WHITE, flex: 1 }}>
+                {label}
+              </Text>
+              <Text style={{ fontSize: 8, color: WHITE, opacity: 0.85 }}>
+                {pilierKpis.length} indicateur{pilierKpis.length > 1 ? 's' : ''}
+              </Text>
+            </View>
+
+            {/* Fiches KPI du pilier */}
+            {pilierKpis.map(kpi => <KPICard key={kpi.id} kpi={kpi} />)}
+          </View>
+        )
+      })}
     </ReportPage>
   )
 }
 
-// ─── S14. TABLEAU RÉCAPITULATIF ───────────────────────────────────────────────
+// ─── S13. TABLEAU RÉCAPITULATIF ───────────────────────────────────────────────
 
 function KPISummaryTablePage() {
+  // Filtre : KPI-02 à KPI-15 uniquement (exclusion KPI-01)
+  const kpisToDisplay = KPIS.filter(k => k.id !== 'KPI-01')
+
   const cols = [
     { label: 'ID',         flex: 0.7 },
     { label: 'Indicateur', flex: 2.5 },
@@ -651,7 +767,7 @@ function KPISummaryTablePage() {
           ))}
         </View>
         {/* rows */}
-        {KPIS.map((k, i) => (
+        {kpisToDisplay.map((k, i) => (
           <View key={k.id} style={[S.tableRow, i % 2 === 1 ? S.tableRowAlt : {}]}>
             <Text style={[S.tableCell, { flex: 0.7, fontFamily: 'Helvetica-Bold', color: NAVY }]}>{k.id}</Text>
             <Text style={[S.tableCell, { flex: 2.5 }]}>{k.nom}</Text>
@@ -669,7 +785,7 @@ function KPISummaryTablePage() {
   )
 }
 
-// ─── S15-18. ALERTES & RECOMMANDATIONS ───────────────────────────────────────
+// ─── S14-17. ALERTES & RECOMMANDATIONS ───────────────────────────────────────
 
 function AlertsRecoPage() {
   const rouge  = KPIS.filter(k => k.statut === 'rouge')
@@ -702,7 +818,6 @@ function AlertsRecoPage() {
       <Text style={S.h1}>Alertes prioritaires</Text>
       <View style={S.dividerGold} />
 
-      {/* Critiques */}
       {rouge.length > 0 && (
         <>
           <Text style={[S.h3, { color: C_ROUGE }]}>🔴 KPI Critiques</Text>
@@ -717,7 +832,6 @@ function AlertsRecoPage() {
         </>
       )}
 
-      {/* À surveiller */}
       {orange.length > 0 && (
         <>
           <Text style={[S.h3, { color: C_ORANGE, marginTop: 10 }]}>🟠 KPI à surveiller</Text>
@@ -732,7 +846,6 @@ function AlertsRecoPage() {
         </>
       )}
 
-      {/* Court terme */}
       <Text style={[S.h2, { marginTop: 14 }]}>Recommandations à court terme (0–12 mois)</Text>
       {recos.court.map((r, i) => (
         <View key={i} style={S.recoItem}>
@@ -741,7 +854,6 @@ function AlertsRecoPage() {
         </View>
       ))}
 
-      {/* Moyen terme */}
       <Text style={S.h2}>Recommandations à moyen terme (1–3 ans)</Text>
       {recos.moyen.map((r, i) => (
         <View key={i} style={S.recoItem}>
@@ -750,7 +862,6 @@ function AlertsRecoPage() {
         </View>
       ))}
 
-      {/* Long terme */}
       <Text style={S.h2}>Recommandations à long terme (3–5 ans)</Text>
       {recos.long.map((r, i) => (
         <View key={i} style={S.recoItem}>
@@ -762,9 +873,11 @@ function AlertsRecoPage() {
   )
 }
 
-// ─── S19. CATALOGUE KPI ───────────────────────────────────────────────────────
+// ─── S18. CATALOGUE KPI ───────────────────────────────────────────────────────
 
 function KPICataloguePage() {
+  const kpisToDisplay = KPIS.filter(k => k.id !== 'KPI-01')
+
   return (
     <ReportPage>
       <Text style={S.partLabel}>Partie VI — Annexes techniques</Text>
@@ -776,7 +889,7 @@ function KPICataloguePage() {
             <Text key={h} style={[S.tableHeaderCell, { flex: [0.6,2,1.2,1,2,1.2][i] }]}>{h}</Text>
           ))}
         </View>
-        {KPIS.map((k, i) => (
+        {kpisToDisplay.map((k, i) => (
           <View key={k.id} style={[S.tableRow, i % 2 === 1 ? S.tableRowAlt : {}]}>
             <Text style={[S.tableCell, { flex: 0.6, fontFamily: 'Helvetica-Bold', color: NAVY, fontSize: 7.5 }]}>{k.id}</Text>
             <Text style={[S.tableCell, { flex: 2, fontSize: 7.5 }]}>{k.nom}</Text>
@@ -791,7 +904,7 @@ function KPICataloguePage() {
   )
 }
 
-// ─── S20. SOURCES ─────────────────────────────────────────────────────────────
+// ─── S19. SOURCES ─────────────────────────────────────────────────────────────
 
 function SourcesPage() {
   return (
@@ -817,7 +930,7 @@ function SourcesPage() {
   )
 }
 
-// ─── S21-22. GLOSSAIRE + LIMITES ─────────────────────────────────────────────
+// ─── S20-21. GLOSSAIRE + LIMITES ─────────────────────────────────────────────
 
 function GlossaryLimitsPage() {
   const limits = [
@@ -830,7 +943,6 @@ function GlossaryLimitsPage() {
 
   return (
     <ReportPage>
-      {/* Glossaire */}
       <Text style={S.h1}>Glossaire</Text>
       <View style={S.dividerGold} />
       {GLOSSARY.map(({ term, def }) => (
@@ -842,14 +954,12 @@ function GlossaryLimitsPage() {
         </View>
       ))}
 
-      {/* Limites */}
       <Text style={[S.h1, { marginTop: 20 }]}>Limites méthodologiques</Text>
       <View style={S.divider} />
       {limits.map((l, i) => (
         <Text key={i} style={[S.body, { paddingLeft: 10 }]}>• {l}</Text>
       ))}
 
-      {/* Signature finale */}
       <View style={[S.dividerGold, { marginTop: 20 }]} />
       <Text style={[S.small, { textAlign: 'center', fontStyle: 'italic' }]}>
         Rapport généré le {GENERATION_DATE} · Think Digital, Think Tunisia{'\n'}
@@ -860,7 +970,6 @@ function GlossaryLimitsPage() {
 }
 
 // ─── DOCUMENT PRINCIPAL ───────────────────────────────────────────────────────
-// Toutes les 22 sections dans l'ordre. Chaque "Page" = composant autonome.
 
 export function ReportPDF() {
   return (
@@ -871,33 +980,33 @@ export function ReportPDF() {
       creator="Plateforme Think Digital, Think Tunisia"
       producer="@react-pdf/renderer"
     >
-      {/* S1 */}
+      {/* S1 — Couverture */}
       <CoverPage />
-      {/* S2 */}
+      {/* S2 — Informations institutionnelles */}
       <InstitutionalPage />
-      {/* S3 */}
+      {/* S3 — Table des matières */}
       <TOCPage />
-      {/* S4-5 */}
+      {/* S4-5 — Figures & Tableaux */}
       <ListsFiguresTablesPage />
-      {/* S6 */}
+      {/* S6 — Résumé exécutif */}
       <ExecutiveSummaryPage />
-      {/* S7-9 */}
+      {/* S7-9 — Intro + Objectifs + Méthodologie + Structure KPI */}
       <IntroMethodoPage />
-      {/* S10-11 */}
+      {/* S10-11 — Analyse par pilier (sans bloc score IMNT/NRI) */}
       <IMNTScorePage />
-      {/* S12 */}
+      {/* S12 — Graphiques comparatifs */}
       <ChartsPage />
-      {/* S13 */}
+      {/* S13 — Fiches KPI groupées par pilier */}
       <KPIDetailsPage />
-      {/* S14 */}
+      {/* S14 — Tableau récapitulatif */}
       <KPISummaryTablePage />
-      {/* S15-18 */}
+      {/* S15-18 — Alertes & Recommandations */}
       <AlertsRecoPage />
-      {/* S19 */}
+      {/* S19 — Catalogue KPI */}
       <KPICataloguePage />
-      {/* S20 */}
+      {/* S20 — Sources */}
       <SourcesPage />
-      {/* S21-22 */}
+      {/* S21-22 — Glossaire & Limites */}
       <GlossaryLimitsPage />
     </Document>
   )
