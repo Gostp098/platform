@@ -146,44 +146,47 @@ function CoverPage() {
           Édition {REPORT_YEAR} · Version {REPORT_VERSION}
         </Text>
 
-        {/* ── Titre principal espacé et agrandi ── */}
-        <Text style={{
-          fontSize: 13,
-          fontFamily: 'Helvetica-Bold',
-          color: WHITE,
-          letterSpacing: 4,
-          textTransform: 'uppercase',
-          textAlign: 'center',
-          lineHeight: 1.7,
-          marginTop: 18,
-          marginBottom: 6,
-        }}>
-          {'R A P P O R T  A N N U E L  D E'}
-        </Text>
-        <Text style={{
-          fontSize: 13,
-          fontFamily: 'Helvetica-Bold',
-          color: GOLD,
-          letterSpacing: 4,
-          textTransform: 'uppercase',
-          textAlign: 'center',
-          lineHeight: 1.7,
-          marginBottom: 6,
-        }}>
-          {'L \' É C O N O M I E  N U M É R I Q U E'}
-        </Text>
-        <Text style={{
-          fontSize: 13,
-          fontFamily: 'Helvetica-Bold',
-          color: WHITE,
-          letterSpacing: 4,
-          textTransform: 'uppercase',
-          textAlign: 'center',
-          lineHeight: 1.7,
-          marginBottom: 20,
-        }}>
-          {'E N  T U N I S I E'}
-        </Text>
+     {/* ── Titre principal agrandi et sans espacement de lettres ── */}
+
+<Text style={{
+  fontSize: 22,
+  fontFamily: 'Helvetica-Bold',
+  color: WHITE,
+  letterSpacing: 0,
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  lineHeight: 1.4,
+  marginTop: 24,
+  marginBottom: 8,
+}}>
+  {'RAPPORT ANNUEL DE'}
+</Text>
+
+<Text style={{
+  fontSize: 26,
+  fontFamily: 'Helvetica-Bold',
+  color: GOLD,
+  letterSpacing: 0,
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  lineHeight: 1.3,
+  marginBottom: 8,
+}}>
+  {"L'ÉCONOMIE NUMÉRIQUE"}
+</Text>
+
+<Text style={{
+  fontSize: 28,
+  fontFamily: 'Helvetica-Bold',
+  color: WHITE,
+  letterSpacing: 0,
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  lineHeight: 1.3,
+  marginBottom: 24,
+}}>
+  {'EN TUNISIE'}
+</Text>
 
         {/* ── Slogan ── */}
         <Text style={S.coverTitle1}>Think Digital,</Text>
