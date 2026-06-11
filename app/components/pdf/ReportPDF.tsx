@@ -130,10 +130,6 @@ function ReportPage({ children, style }: { children: React.ReactNode; style?: an
 }
 
 // ─── S1. COVER PAGE ───────────────────────────────────────────────────────────
-// Modifications :
-//   • Titre principal en lettres espacées, taille augmentée
-//   • Texte méta (indicateurs, sources, date, copyright) en blanc et plus lisible
-//   • Bloc score (jauges IMNT + NRI + rangs) entièrement supprimé
 
 function CoverPage() {
   return (
@@ -141,54 +137,50 @@ function CoverPage() {
       <View style={S.coverAccentBar} />
       <View style={S.coverContainer}>
 
-        {/* ── Sous-titre catégorie (petit tag au-dessus) ── */}
         <Text style={S.coverTag}>
           Édition {REPORT_YEAR} · Version {REPORT_VERSION}
         </Text>
 
-     {/* ── Titre principal agrandi et sans espacement de lettres ── */}
+        <Text style={{
+          fontSize: 22,
+          fontFamily: 'Helvetica-Bold',
+          color: WHITE,
+          letterSpacing: 0,
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          lineHeight: 1.4,
+          marginTop: 24,
+          marginBottom: 8,
+        }}>
+          {'RAPPORT ANNUEL DE'}
+        </Text>
 
-<Text style={{
-  fontSize: 22,
-  fontFamily: 'Helvetica-Bold',
-  color: WHITE,
-  letterSpacing: 0,
-  textTransform: 'uppercase',
-  textAlign: 'center',
-  lineHeight: 1.4,
-  marginTop: 24,
-  marginBottom: 8,
-}}>
-  {'RAPPORT ANNUEL DE'}
-</Text>
+        <Text style={{
+          fontSize: 26,
+          fontFamily: 'Helvetica-Bold',
+          color: GOLD,
+          letterSpacing: 0,
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          lineHeight: 1.3,
+          marginBottom: 8,
+        }}>
+          {"L'ÉCONOMIE NUMÉRIQUE"}
+        </Text>
 
-<Text style={{
-  fontSize: 26,
-  fontFamily: 'Helvetica-Bold',
-  color: GOLD,
-  letterSpacing: 0,
-  textTransform: 'uppercase',
-  textAlign: 'center',
-  lineHeight: 1.3,
-  marginBottom: 8,
-}}>
-  {"L'ÉCONOMIE NUMÉRIQUE"}
-</Text>
+        <Text style={{
+          fontSize: 28,
+          fontFamily: 'Helvetica-Bold',
+          color: WHITE,
+          letterSpacing: 0,
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          lineHeight: 1.3,
+          marginBottom: 24,
+        }}>
+          {'EN TUNISIE'}
+        </Text>
 
-<Text style={{
-  fontSize: 28,
-  fontFamily: 'Helvetica-Bold',
-  color: WHITE,
-  letterSpacing: 0,
-  textTransform: 'uppercase',
-  textAlign: 'center',
-  lineHeight: 1.3,
-  marginBottom: 24,
-}}>
-  {'EN TUNISIE'}
-</Text>
-
-        {/* ── Slogan ── */}
         <Text style={S.coverTitle1}>Think Digital,</Text>
         <Text style={S.coverTitle2}>Think Tunisia.</Text>
 
@@ -198,14 +190,12 @@ function CoverPage() {
 
         <View style={S.coverDivider} />
 
-        {/* ── Bloc méta : texte blanc, lisible ── */}
         <View style={{
           marginTop: 24,
           marginBottom: 24,
           paddingHorizontal: 30,
           gap: 10,
         }}>
-          {/* Indicateurs & piliers */}
           <Text style={{
             fontSize: 11,
             color: WHITE,
@@ -216,7 +206,6 @@ function CoverPage() {
             15 indicateurs clés · 5 piliers IMNT
           </Text>
 
-          {/* Sources */}
           <Text style={{
             fontSize: 10,
             color: WHITE,
@@ -228,7 +217,6 @@ function CoverPage() {
             Sources : Portulans Institute, UIT, BCT, UN DESA, APII
           </Text>
 
-          {/* Date de génération */}
           <Text style={{
             fontSize: 10,
             color: GOLD,
@@ -241,7 +229,6 @@ function CoverPage() {
           </Text>
         </View>
 
-        {/* ── Footer doré avec copyright ── */}
         <View style={S.coverGoldBar}>
           <Text style={{
             fontSize: 9,
@@ -428,7 +415,7 @@ function ExecutiveSummaryPage() {
       </Text>
 
       {/* Alertes */}
-      <Text style={S.h3}>⚠ Trois alertes majeures</Text>
+      <Text style={S.h3}>Trois alertes majeures</Text>
       {[...critiques, ...topOrange].slice(0, 3).map(k => (
         <View key={k.id} style={k.statut === 'rouge' ? S.alertBoxRouge : S.alertBoxOrange}>
           <View style={S.alertBox}>
@@ -443,14 +430,14 @@ function ExecutiveSummaryPage() {
       ))}
 
       {/* Recommandations */}
-      <Text style={S.h3}>✅ Trois recommandations prioritaires</Text>
+      <Text style={S.h3}>Trois recommandations prioritaires</Text>
       {[
         'Lancer un plan marketing national pour E-Houwiya avec objectif 500k abonnés d\'ici fin 2025.',
         'Accélérer le déploiement FTTH et adopter la loi sur la protection des données personnelles.',
         'Consolider la Fintech en imposant l\'interopérabilité des wallets et en élargissant l\'inclusion financière.',
       ].map((r, i) => (
         <View key={i} style={S.recoItem}>
-          <Text style={S.recoText}>→ {r}</Text>
+          <Text style={S.recoText}>- {r}</Text>
         </View>
       ))}
     </ReportPage>
@@ -480,12 +467,12 @@ function IntroMethodoPage() {
       {/* S8 — Objectifs */}
       <Text style={S.h2}>Objectifs du rapport</Text>
       {[
-        { icon: '📐', title: 'Mesurer', body: 'Des données sourcées, jamais des impressions. Agréger des indicateurs officiels (BCT, UIT, UN DESA) avec une méthodologie transparente et une date de fraîcheur affichée.' },
-        { icon: '🔬', title: 'Analyser', body: 'L\'IA au service de l\'expertise. Générer des analyses et recommandations — zéro invention, zéro hallucination. Validation humaine systématique.' },
-        { icon: '🎯', title: 'Décider', body: 'Un référentiel pour agir. Fournir aux investisseurs, décideurs et chercheurs les arguments chiffrés pour orienter leurs stratégies et politiques.' },
-      ].map(({ icon, title, body }) => (
+        { num: '01', title: 'Mesurer', body: 'Des données sourcées, jamais des impressions. Agréger des indicateurs officiels (BCT, UIT, UN DESA) avec une méthodologie transparente et une date de fraîcheur affichée.' },
+        { num: '02', title: 'Analyser', body: 'L\'IA au service de l\'expertise. Générer des analyses et recommandations — zéro invention, zéro hallucination. Validation humaine systématique.' },
+        { num: '03', title: 'Décider', body: 'Un référentiel pour agir. Fournir aux investisseurs, décideurs et chercheurs les arguments chiffrés pour orienter leurs stratégies et politiques.' },
+      ].map(({ num, title, body }) => (
         <View key={title} style={{ flexDirection: 'row', marginBottom: 8, gap: 8, backgroundColor: LIGHT2, borderRadius: 4, padding: 8, borderLeftWidth: 2, borderLeftColor: NAVY }}>
-          <Text style={{ fontSize: 14 }}>{icon}</Text>
+          <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', color: NAVY, width: 20 }}>{num}</Text>
           <View style={{ flex: 1 }}>
             <Text style={[S.h3, { marginTop: 0 }]}>{title}</Text>
             <Text style={S.small}>{body}</Text>
@@ -551,8 +538,6 @@ function IntroMethodoPage() {
 }
 
 // ─── S10-11. PILIERS IMNT + GRAPHIQUES ────────────────────────────────────────
-// Modification : le bloc "Score IMNT global + NRI" a été supprimé.
-// La page commence directement par l'analyse des 5 piliers.
 
 function IMNTScorePage() {
   return (
@@ -578,12 +563,12 @@ function IMNTScorePage() {
             <View style={S.pilierCardBody}>
               <Text style={S.pilierCardConstat}>{analysis.constat}</Text>
               <Text style={S.pilierCardForces}>
-                ✓ {analysis.forces.join(' · ')}
+                Points forts : {analysis.forces.join(' - ')}
               </Text>
               <Text style={S.pilierCardFaiblesses}>
-                ✗ {analysis.faiblesses.join(' · ')}
+                Points faibles : {analysis.faiblesses.join(' - ')}
               </Text>
-              <Text style={S.pilierCardAlerte}>⚠ {analysis.alerte}</Text>
+              <Text style={S.pilierCardAlerte}>Alerte : {analysis.alerte}</Text>
             </View>
           </View>
         )
@@ -654,11 +639,11 @@ function KPICard({ kpi }: { kpi: KPI }) {
           {kpi.seuil_vert && (
             <>
               <Text style={S.kpiFieldLabel}>Seuils</Text>
-              <View style={S.kpiSeuilRow}>
-                {kpi.seuil_vert  && <Text style={[S.kpiSeuilPill, { backgroundColor: '#d1fae5', color: '#065f46', fontSize: 7 }]}>✓ {kpi.seuil_vert}</Text>}
-                {kpi.seuil_orange && <Text style={[S.kpiSeuilPill, { backgroundColor: '#fff7ed', color: '#92400e', fontSize: 7 }]}>⚡ {kpi.seuil_orange}</Text>}
-                {kpi.seuil_rouge  && <Text style={[S.kpiSeuilPill, { backgroundColor: '#fef2f2', color: '#7f1d1d', fontSize: 7 }]}>✗ {kpi.seuil_rouge}</Text>}
-              </View>
+            <View style={{ flexDirection: 'column', gap: 3, marginTop: 2 }}>
+  {kpi.seuil_vert   && <Text style={[S.kpiSeuilPill, { backgroundColor: '#d1fae5', color: '#065f46', fontSize: 7 }]}>Vert : {kpi.seuil_vert}</Text>}
+  {kpi.seuil_orange && <Text style={[S.kpiSeuilPill, { backgroundColor: '#fff7ed', color: '#92400e', fontSize: 7 }]}>Orange : {kpi.seuil_orange}</Text>}
+  {kpi.seuil_rouge  && <Text style={[S.kpiSeuilPill, { backgroundColor: '#fef2f2', color: '#7f1d1d', fontSize: 7 }]}>Rouge : {kpi.seuil_rouge}</Text>}
+</View>
             </>
           )}
 
@@ -672,17 +657,14 @@ function KPICard({ kpi }: { kpi: KPI }) {
 
       {/* Recommendation */}
       <View style={S.kpiRecoBox}>
-        <Text style={S.kpiRecoLabel}>💡 Recommandation :</Text>
+        <Text style={S.kpiRecoLabel}>Recommandation :</Text>
         <Text style={S.kpiRecoText}>{kpi.recommandation}</Text>
       </View>
     </View>
   )
 }
 
-// Les fiches KPI sont filtrées pour n'afficher que KPI-02 à KPI-15 (sans KPI-01)
-// et groupées par pilier selon la nouvelle structure PILIER_KPI_MAP.
 function KPIDetailsPage() {
-  // KPIs groupés par pilier dans l'ordre défini
   const pilierOrder = [
     'Infrastructures',
     'Capital humain',
@@ -711,7 +693,6 @@ function KPIDetailsPage() {
 
         return (
           <View key={pilierKey}>
-            {/* En-tête de pilier */}
             <View style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -733,7 +714,6 @@ function KPIDetailsPage() {
               </Text>
             </View>
 
-            {/* Fiches KPI du pilier */}
             {pilierKpis.map(kpi => <KPICard key={kpi.id} kpi={kpi} />)}
           </View>
         )
@@ -745,7 +725,6 @@ function KPIDetailsPage() {
 // ─── S13. TABLEAU RÉCAPITULATIF ───────────────────────────────────────────────
 
 function KPISummaryTablePage() {
-  // Filtre : KPI-02 à KPI-15 uniquement (exclusion KPI-01)
   const kpisToDisplay = KPIS.filter(k => k.id !== 'KPI-01')
 
   const cols = [
@@ -763,13 +742,11 @@ function KPISummaryTablePage() {
       <Text style={S.h1}>Tableau récapitulatif des 15 KPI</Text>
       <View style={S.dividerGold} />
       <View style={S.tableContainer}>
-        {/* header */}
         <View style={S.tableHeaderRow}>
           {cols.map(c => (
             <Text key={c.label} style={[S.tableHeaderCell, { flex: c.flex }]}>{c.label}</Text>
           ))}
         </View>
-        {/* rows */}
         {kpisToDisplay.map((k, i) => (
           <View key={k.id} style={[S.tableRow, i % 2 === 1 ? S.tableRowAlt : {}]}>
             <Text style={[S.tableCell, { flex: 0.7, fontFamily: 'Helvetica-Bold', color: NAVY }]}>{k.id}</Text>
@@ -823,7 +800,7 @@ function AlertsRecoPage() {
 
       {rouge.length > 0 && (
         <>
-          <Text style={[S.h3, { color: C_ROUGE }]}>🔴 KPI Critiques</Text>
+          <Text style={[S.h3, { color: C_ROUGE }]}>KPI Critiques</Text>
           {rouge.map(k => (
             <View key={k.id} style={[S.alertBox, S.alertBoxRouge]}>
               <View style={{ flex: 1 }}>
@@ -837,7 +814,7 @@ function AlertsRecoPage() {
 
       {orange.length > 0 && (
         <>
-          <Text style={[S.h3, { color: C_ORANGE, marginTop: 10 }]}>🟠 KPI à surveiller</Text>
+          <Text style={[S.h3, { color: C_ORANGE, marginTop: 10 }]}>KPI a surveiller</Text>
           {orange.map(k => (
             <View key={k.id} style={[S.alertBox, S.alertBoxOrange]}>
               <View style={{ flex: 1 }}>
@@ -995,21 +972,21 @@ export function ReportPDF() {
       <ExecutiveSummaryPage />
       {/* S7-9 — Intro + Objectifs + Méthodologie + Structure KPI */}
       <IntroMethodoPage />
-      {/* S10-11 — Analyse par pilier (sans bloc score IMNT/NRI) */}
+      {/* S10 — Analyse par pilier */}
       <IMNTScorePage />
-      {/* S12 — Graphiques comparatifs */}
+      {/* S11 — Graphiques comparatifs */}
       <ChartsPage />
-      {/* S13 — Fiches KPI groupées par pilier */}
+      {/* S12 — Fiches KPI groupées par pilier */}
       <KPIDetailsPage />
-      {/* S14 — Tableau récapitulatif */}
+      {/* S13 — Tableau récapitulatif */}
       <KPISummaryTablePage />
-      {/* S15-18 — Alertes & Recommandations */}
+      {/* S14-17 — Alertes & Recommandations */}
       <AlertsRecoPage />
-      {/* S19 — Catalogue KPI */}
+      {/* S18 — Catalogue KPI */}
       <KPICataloguePage />
-      {/* S20 — Sources */}
+      {/* S19 — Sources */}
       <SourcesPage />
-      {/* S21-22 — Glossaire & Limites */}
+      {/* S20-21 — Glossaire & Limites */}
       <GlossaryLimitsPage />
     </Document>
   )

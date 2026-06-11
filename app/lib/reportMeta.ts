@@ -24,7 +24,6 @@ export const PILIER_ORDER: string[] = [
   'Infrastructures',
   'Capital humain',
   'Economie productive',   // ← clé exacte de kpis.ts (sans accent)
-  'Fintech',
   'E-gouvernement',
   'Gouvernance',
 ]
@@ -34,7 +33,6 @@ export const PILIER_LABELS: Record<string, string> = {
   'Infrastructures':    'Infrastructures',
   'Capital humain':     'Capital humain',
   'Economie productive':'Économie productive',
-  'Fintech':            'Fintech',
   'E-gouvernement':     'E-gouvernement',
   'Gouvernance':        'Gouvernance & Cyber',
 }
@@ -45,7 +43,6 @@ export const PILIER_SCORES: Record<string, number> = {
   'Infrastructures':    50,   // KPI-02 vert, KPI-03 vert, KPI-04 orange, KPI-05 rouge → 2.5/4 → 63 → arrondi
   'Capital humain':     100,  // KPI-06 vert → 1/1 → 100
   'Economie productive': 50,  // KPI-07 orange, KPI-08 orange → 1/2 → 50
-  'Fintech':            100,  // KPI-09 vert, KPI-10 vert → 2/2 → 100
   'E-gouvernement':     17,   // KPI-11 orange, KPI-12 orange, KPI-13 rouge → 1/3 → 33 → arrondi bas
   'Gouvernance':        0,    // KPI-14 orange, KPI-15 rouge → 0.5/2 → 25 (conservative)
 }
@@ -55,7 +52,6 @@ export const PILIER_COLORS: Record<string, string> = {
   'Infrastructures':    '#2E86AB',
   'Capital humain':     '#A23B72',
   'Economie productive':'#F18F01',
-  'Fintech':            '#F18F01',
   'E-gouvernement':     '#C73E1D',
   'Gouvernance':        '#3B1F2B',
 }

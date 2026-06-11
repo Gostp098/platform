@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { KPIS, type KPI } from '@/app/lib/kpis/kpis'
-import { Nav, Footer } from '../components/NavFooter'
+import { Nav, Footer } from '@/app/components/NavFooter'
 
 const STATUS_MAP = {
   vert:   { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500', label: 'Favorable' },
