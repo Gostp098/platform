@@ -154,12 +154,10 @@ export function Footer() {
         {/* Credits */}
         <div className="pt-6 pb-4 border-b border-slate-800/50 text-xs text-slate-500 space-y-1">
           <p>
-            © Idée &amp; Concept — Madame Rim Jalouli. Tous droits réservés. Toute utilisation,
-            reproduction ou exploitation du concept, de la démarche et des contenus est soumise
-            à autorisation préalable.
+            © Idée &amp; Concept — Madame Rim Jalouli. Tous droits réservés.
           </p>
           <p>
-            © Conception, démarche éditoriale &amp; consultation approfondie — Mr Wahib Zaier.
+            © Conception éditoriale &amp; consultation approfondie — Mr Wahib Zaier.
           </p>
         </div>
 
