@@ -83,7 +83,6 @@ export function Footer() {
   ]
 
   const legalLinks = [
-    { label: 'Mentions légales',      href: '/mentions-legales' },
     { label: 'Contact',               href: '/about#contact' },
   ]
 
