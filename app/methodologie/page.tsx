@@ -132,63 +132,42 @@ export default function MetodologiePage() {
         {/* ── INDEX IMNT ── */}
         <section>
           <p className="text-xs font-bold uppercase tracking-widest text-[#D4A373] mb-1">Définition</p>
-          <h2 className="text-2xl font-black text-slate-800 mb-6">L'Index IMNT — comment est-il calculé ?</h2>
+          <h2 className="text-2xl font-black text-slate-800 mb-6">L'Index IMNT — présentation</h2>
           <div className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-sm">
-
-            {/* FIX: removed contradiction — single consistent explanation */}
             <p className="text-slate-600 leading-relaxed mb-6">
               L'<strong className="text-slate-800">IMNT (Indice de Maturité du Numérique en Tunisie)</strong> est
-              un index composite construit sur <strong className="text-slate-800">5 piliers stratégiques</strong>.
-              Il agrège <strong className="text-slate-800">14 KPIs évaluatifs</strong> — le KPI-01 (population
-              totale) étant un indicateur de contexte exclu du calcul car il n'est pas évalué selon des seuils.
+              un indice composite structuré autour de cinq piliers stratégiques. Dans cette version pilote,
+              les statuts <strong className="text-slate-800">« favorable »</strong>,{' '}
+              <strong className="text-slate-800">« à surveiller »</strong> et{' '}
+              <strong className="text-slate-800">« critique »</strong> ont une fonction principalement
+              interprétative : ils facilitent la lecture des résultats, sans se substituer à la logique
+              complète de calcul de l'indice.
             </p>
-
             <p className="text-slate-600 leading-relaxed mb-6">
-              Chaque KPI évaluatif reçoit un score selon trois niveaux d'alerte définis par des seuils spécifiques
-              à chaque indicateur (voir la fiche de chaque KPI pour les seuils détaillés) :
+              Le score IMNT affiché repose sur une agrégation consolidée des indicateurs retenus,
+              structurée par pilier. La présente plateforme constitue une <strong className="text-slate-800">version
+              pilote publique</strong> du dispositif, conçue pour rendre lisible le rapport annuel,
+              ses indicateurs et son tableau de bord.
             </p>
-
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
+            {/* colour legend — kept as reading guides only */}
+            <div className="grid md:grid-cols-3 gap-4">
               {[
-                { color: 'bg-emerald-500', label: 'Favorable (vert)',       score: '1 point',   desc: "L'indicateur dépasse le seuil minimal défini" },
-                { color: 'bg-amber-400',   label: 'À surveiller (orange)',  score: '0,5 point', desc: "L'indicateur est dans la zone intermédiaire" },
-                { color: 'bg-red-500',     label: 'Critique (rouge)',       score: '0 point',   desc: "L'indicateur est en dessous du seuil critique" },
-              ].map(({ color, label, score, desc }) => (
-                <div key={label} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl">
+                { color: 'bg-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-200', label: 'Favorable',    desc: 'Repère de lecture — résultat positif' },
+                { color: 'bg-amber-400',   bg: 'bg-amber-50',   border: 'border-amber-200',   label: 'À surveiller', desc: 'Repère de lecture — vigilance recommandée' },
+                { color: 'bg-red-500',     bg: 'bg-red-50',     border: 'border-red-200',      label: 'Critique',     desc: 'Repère de lecture — amélioration urgente' },
+              ].map(({ color, bg, border, label, desc }) => (
+                <div key={label} className={`flex items-start gap-3 p-4 rounded-xl border ${bg} ${border}`}>
                   <span className={`w-3 h-3 rounded-full ${color} mt-1 flex-shrink-0`} aria-hidden="true" />
                   <div>
                     <div className="font-semibold text-slate-800 text-sm">{label}</div>
-                    <div className="text-[#D4A373] font-bold text-sm">{score}</div>
                     <div className="text-xs text-slate-500 mt-1">{desc}</div>
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* FIX: formula block — consistent with actual calculation */}
-            <div className="bg-[#0A192F]/5 border border-[#0A192F]/10 rounded-xl p-5">
-              <p className="text-sm font-bold text-slate-700 mb-2">Formule de calcul</p>
-              <div className="font-mono text-sm text-slate-700 bg-white rounded-lg px-4 py-3 border border-slate-200 mb-3">
-                Score IMNT = (Σ points obtenus sur les 14 KPIs évaluatifs ÷ 14) × 100
-              </div>
-              <div className="grid sm:grid-cols-3 gap-3 text-xs text-slate-500">
-                <div className="bg-white rounded-lg p-3 border border-slate-100">
-                  <div className="font-semibold text-slate-700 mb-0.5">KPIs évaluatifs</div>
-                  <div>14 indicateurs (KPI-02 à KPI-15)</div>
-                </div>
-                <div className="bg-white rounded-lg p-3 border border-slate-100">
-                  <div className="font-semibold text-slate-700 mb-0.5">KPI de contexte</div>
-                  <div>KPI-01 (population) — exclu du score</div>
-                </div>
-                <div className="bg-[#D4A373]/10 rounded-lg p-3 border border-[#D4A373]/20">
-                  <div className="font-semibold text-slate-700 mb-0.5">Score actuel</div>
-                  <div className="text-[#0A192F] font-black text-base">48,7 / 100</div>
-                </div>
-              </div>
-              <p className="text-xs text-slate-400 mt-3">
-                * Cette version est une version pilote (MVP). Les pondérations par pilier seront affinées
-                dans les prochaines éditions en fonction des retours experts.
-              </p>
+            <div className="mt-5 bg-[#D4A373]/10 border border-[#D4A373]/20 rounded-xl p-4 flex items-center justify-between">
+              <span className="text-sm text-slate-600">Score IMNT — Édition pilote 2025</span>
+              <span className="text-2xl font-black text-[#0A192F]">48,7 <span className="text-sm font-normal text-slate-400">/ 100</span></span>
             </div>
           </div>
         </section>

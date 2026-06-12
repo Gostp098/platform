@@ -46,6 +46,18 @@ function SectionHeader({ eyebrow, title, description, center = true }: {
   )
 }
 
+function WhiteSectionHeader({ eyebrow, title, description, center = true }: {
+  eyebrow: string; title: string; description?: string; center?: boolean
+}) {
+  return (
+    <div className={`mb-12 ${center ? 'text-center' : ''}`}>
+      <p className="text-xs font-bold uppercase tracking-widest text-[#D4A373] mb-2">{eyebrow}</p>
+      <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white">{title}</h2>
+      {description && <p className="text-slate-500 mt-2 max-w-2xl mx-auto">{description}</p>}
+    </div>
+  )
+}
+
 function Card({ children, className = '', hover = true }: {
   children: React.ReactNode; className?: string; hover?: boolean
 }) {
@@ -58,17 +70,17 @@ function Card({ children, className = '', hover = true }: {
   )
 }
 
-// ─── score par pilier ─────────────────────────────────────────────────────────
+// Scores retenus du mémoire — source unique de vérité, identique à app/kpis/page.tsx
+const PILIER_SCORES: Record<string, number> = {
+  'Infrastructures':     52.4,
+  'Capital humain':      54.8,
+  'Economie productive': 44.2,
+  'E-gouvernement':      50.6,
+  'Gouvernance':         40.0,
+}
 
 function pilierScore(pilierKey: string): number {
-  const kpis = KPIS.filter(k => k.pilier === pilierKey && k.statut !== 'gris')
-  if (!kpis.length) return 0
-  const total = kpis.reduce((acc, k) => {
-    if (k.statut === 'vert')   return acc + 1
-    if (k.statut === 'orange') return acc + 0.5
-    return acc
-  }, 0)
-  return Math.round((total / kpis.length) * 100)
+  return PILIER_SCORES[pilierKey] ?? 0
 }
 
 // ─── jauge SVG ────────────────────────────────────────────────────────────────
@@ -378,36 +390,43 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── 5 PILIERS IMNT (single source of truth via pilierScore()) ── */}
-        <section className="bg-[#0A192F] py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <SectionHeader
-              eyebrow="Architecture"
-              title="L'Index IMNT : cinq piliers, un score"
-              description="Cliquez sur un pilier pour explorer ses indicateurs"
-              center
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-              {IMNT_PILIERS.map(({ num, label, icon, pilierKey }) => {
-                const score = pilierScore(pilierKey)
-                const color = score >= 65 ? 'text-emerald-400' : score >= 40 ? 'text-amber-400' : 'text-red-400'
-                return (
-                  <Link
-                    key={num}
-                    href={`/kpis?pilier=${encodeURIComponent(pilierKey)}`}
-                    className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D4A373]/40 rounded-xl p-5 text-center transition-all group focus:outline-none focus:ring-2 focus:ring-[#64FFDA]"
-                  >
-                    <div className="text-2xl mb-2" aria-hidden="true">{icon}</div>
-                    <div className="text-slate-400 text-xs font-bold mb-1">{num}</div>
-                    <div className="text-white text-sm font-bold leading-tight mb-3">{label}</div>
-                    <div className={`text-2xl font-black ${color}`}>{score}</div>
-                    <div className="text-slate-500 text-xs">/100</div>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        </section>
+{/* ── 5 PILIERS IMNT (single source of truth via pilierScore()) ── */}
+<section className="bg-[#0A192F] py-16">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    {/* Custom header with white title */}
+    <div className="mb-12 text-center">
+      <p className="text-xs font-bold uppercase tracking-widest text-[#D4A373] mb-2">
+        Architecture
+      </p>
+      <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white">
+        L'Index IMNT : cinq piliers, un score
+      </h2>
+      <p className="text-slate-500 mt-2 max-w-2xl mx-auto">
+        Cliquez sur un pilier pour explorer ses indicateurs
+      </p>
+    </div>
+    
+    <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+      {IMNT_PILIERS.map(({ num, label, icon, pilierKey }) => {
+        const score = pilierScore(pilierKey)
+        const color = score >= 65 ? 'text-emerald-400' : score >= 40 ? 'text-amber-400' : 'text-red-400'
+        return (
+          <Link
+            key={num}
+            href={`/kpis?pilier=${encodeURIComponent(pilierKey)}`}
+            className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D4A373]/40 rounded-xl p-5 text-center transition-all group focus:outline-none focus:ring-2 focus:ring-[#64FFDA]"
+          >
+            <div className="text-2xl mb-2" aria-hidden="true">{icon}</div>
+            <div className="text-slate-400 text-xs font-bold mb-1">{num}</div>
+            <div className="text-white text-sm font-bold leading-tight mb-3">{label}</div>
+            <div className={`text-2xl font-black ${color}`}>{score}</div>
+            <div className="text-slate-500 text-xs">/100</div>
+          </Link>
+        )
+      })}
+    </div>
+  </div>
+</section>
 
         {/* ── NOTRE MISSION ── */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">

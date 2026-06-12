@@ -31,18 +31,20 @@ const PILIER_ICONS: Record<string, string> = {
   'Gouvernance':         '⚖️',
 }
 
-// Single source of truth for pilier scores — same logic as homepage
-function pilierScore(keys: string[]): number {
-  const kpis = KPIS.filter(k => keys.includes(k.pilier) && k.statut !== 'gris')
-  if (!kpis.length) return 0
-  const total = kpis.reduce((acc, k) => {
-    if (k.statut === 'vert')   return acc + 1
-    if (k.statut === 'orange') return acc + 0.5
-    return acc
-  }, 0)
-  return Math.round((total / kpis.length) * 100)
+// Scores retenus du mémoire — source unique de vérité pour accueil ET page KPIs
+const PILIER_SCORES: Record<string, number> = {
+  'Infrastructures':     52.4,
+  'Capital humain':      54.8,
+  'Economie productive': 44.2,
+  'E-gouvernement':      50.6,
+  'Gouvernance':         40.0,
 }
 
+function pilierScore(keys: string[]): number {
+  const scores = keys.map(k => PILIER_SCORES[k]).filter(Boolean)
+  if (!scores.length) return 0
+  return Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10
+}
 function ScoreGauge({ score, size = 'md' }: { score: number; size?: 'sm' | 'md' }) {
   const color = score >= 65 ? '#10b981' : score >= 40 ? '#f59e0b' : '#ef4444'
   const r  = size === 'sm' ? 36 : 50
@@ -175,7 +177,7 @@ export default function KPIsPage() {
               { label: 'Rang mondial',       value: '96ᵉ',   sub: 'sur 127',      accent: false },
               { label: 'Rang revenus',       value: '14ᵉ',   sub: 'Lower-middle', accent: false },
               { label: 'Rang Arab States',   value: '10ᵉ',   sub: 'région',       accent: false },
-              { label: 'Pilier fort',        value: 'Tech',  sub: 'Technology',   accent: false },
+              { label: 'Pilier le plus avancé', value: '54,8', sub: 'Capital humain', accent: false },
             ].map(({ label, value, sub, accent }) => (
               <div key={label} className={`rounded-xl p-4 text-center ${accent ? 'bg-[#D4A373] text-[#0A192F]' : 'bg-slate-50'}`}>
                 <div className="text-2xl font-black text-[#0A192F]">{value}</div>

@@ -40,11 +40,11 @@ export const PILIER_LABELS: Record<string, string> = {
 // Scores par pilier — calculés selon la formule IMNT (vert=1, orange=0.5, rouge=0)
 // Mis à jour à chaque édition du rapport
 export const PILIER_SCORES: Record<string, number> = {
-  'Infrastructures':    50,   // KPI-02 vert, KPI-03 vert, KPI-04 orange, KPI-05 rouge → 2.5/4 → 63 → arrondi
-  'Capital humain':     100,  // KPI-06 vert → 1/1 → 100
-  'Economie productive': 50,  // KPI-07 orange, KPI-08 orange → 1/2 → 50
-  'E-gouvernement':     17,   // KPI-11 orange, KPI-12 orange, KPI-13 rouge → 1/3 → 33 → arrondi bas
-  'Gouvernance':        0,    // KPI-14 orange, KPI-15 rouge → 0.5/2 → 25 (conservative)
+  'Infrastructures':    52.4,   // KPI-02 vert, KPI-03 vert, KPI-04 orange, KPI-05 rouge → 2.5/4 → 63 → arrondi
+  'Capital humain':     54.8,  // KPI-06 vert → 1/1 → 100
+  'Economie productive': 44.2,  // KPI-07 orange, KPI-08 orange → 1/2 → 50
+  'E-gouvernement':     50.60,   // KPI-11 orange, KPI-12 orange, KPI-13 rouge → 1/3 → 33 → arrondi bas
+  'Gouvernance':        40,    // KPI-14 orange, KPI-15 rouge → 0.5/2 → 25 (conservative)
 }
 
 // ── Couleurs piliers ─────────────────────────────────────────────────────────
